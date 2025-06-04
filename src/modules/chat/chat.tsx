@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Input } from "../../shared/ui/input";
 import { Button } from "../../shared/ui/button";
-import type { Message } from "../../shared/model/types";
-import type { ChatProps } from "../../shared/model/types";
+import type { Message, ChatProps } from "../../shared/model/types";
+import { useTheme } from "../theme/theme-context";
 
 const Chat: React.FC<ChatProps> = ({
   name,
@@ -55,10 +55,22 @@ const Chat: React.FC<ChatProps> = ({
     }
   };
 
+  // Utility classes
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const bgMain = isDark ? "bg-black" : "bg-gray-50";
+  const textMain = isDark ? "text-white" : "text-gray-900";
+  const borderColor = isDark ? "border-gray-700" : "border-gray-300";
+  const inputBg = isDark ? "bg-zinc-900" : "bg-white";
+
   return (
-    <div className="flex flex-col h-screen w-full mx-auto p-8 md:p-20 bg-gray-50">
+    <div
+      className={`flex flex-col h-screen w-full mx-auto p-8 md:p-20 transition-colors duration-300 ${bgMain} ${textMain}`}
+    >
       {/* Chat Header */}
-      <div className="flex items-center gap-4 mb-6 border-b pb-4">
+      <div
+        className={`flex items-center gap-4 mb-6 border-b pb-4 ${borderColor}`}
+      >
         {imgSrc ? (
           <img
             src={imgSrc}
@@ -71,26 +83,46 @@ const Chat: React.FC<ChatProps> = ({
           </div>
         )}
         <div>
-          <h1 className="text-xl font-bold text-gray-900">{name}</h1>
-          <p className="text-gray-600 text-sm">{description}</p>
+          <h1 className="text-xl font-bold">{name}</h1>
+          <p
+            className={`text-sm ${isDark ? "text-gray-300" : "text-gray-600"}`}
+          >
+            {description}
+          </p>
         </div>
       </div>
 
       {/* Chat history */}
-      <div className="flex-1 overflow-y-auto border rounded-lg p-4 bg-white shadow mb-4">
+      <div
+        className={`flex-1 overflow-y-auto border rounded-lg p-4 shadow mb-4 ${inputBg} ${borderColor}`}
+      >
         {messages.map((msg, index) => (
           <div key={index} className="mb-3">
             <p
               className={`font-semibold ${
-                msg.role === "user" ? "text-blue-600" : "text-green-600"
+                msg.role === "user"
+                  ? isDark
+                    ? "text-blue-400"
+                    : "text-blue-600"
+                  : isDark
+                  ? "text-green-400"
+                  : "text-green-600"
               }`}
             >
               {msg.role === "user" ? "You" : name}
             </p>
-            <p className="text-gray-800 whitespace-pre-wrap">{msg.content}</p>
+            <p className={isDark ? "text-white" : "text-gray-800"}>
+              {msg.content}
+            </p>
           </div>
         ))}
-        {loading && <p className="text-sm text-gray-500">AI is typing...</p>}
+        {loading && (
+          <p
+            className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}
+          >
+            AI is typing...
+          </p>
+        )}
       </div>
 
       {/* Input bar */}

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router";
 import { Button } from "../../shared/ui/button.tsx";
+import { ThemeToggle } from "../../modules/theme/theme-toggle.tsx";
 
 export const Wrapper = () => {
   const location = useLocation();
@@ -10,8 +11,14 @@ export const Wrapper = () => {
   }, []);
 
   return (
-    <article className={"w-screen min-h-screen flex bg-slate-100"}>
+    <article className="w-screen min-h-screen flex bg-background text-foreground">
       <aside className="min-w-90 h-screen bg-blue-700 p-8 flex flex-col gap-y-5">
+        {/* Theme toggle */}
+        <div className="flex justify-end mb-4">
+          <ThemeToggle />
+        </div>
+
+        {/* Chat buttons */}
         <Button
           asChild
           variant="ghost"

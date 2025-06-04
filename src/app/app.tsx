@@ -1,9 +1,10 @@
-function App() {
-  return (
-    <>
-      <h1 className="text-3xl font-bold text-blue-700">Hello, World!</h1>
-    </>
-  );
-}
+import { Route, Routes } from "react-router";
+import { Wrapper } from "./ui/wrapper.tsx";
 
-export default App;
+export const App = () => {
+  return (
+    <Routes>
+      <Route path={"/"} element={<Wrapper />}></Route>
+    </Routes>
+  );
+};

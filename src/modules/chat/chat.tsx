@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Input } from "../../shared/ui/input";
+import { Button } from "../../shared/ui/button";
 
 type Message = {
   role: "user" | "assistant";
@@ -47,10 +49,11 @@ const Chat: React.FC = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
+    <div className="flex flex-col h-screen w-full mx-auto p-20">
       <h1 className="text-2xl font-bold mb-4 text-center">Chat with AI</h1>
 
-      <div className="border rounded-lg p-4 h-96 overflow-y-auto bg-white shadow">
+      {/* Chat history */}
+      <div className="flex-1 overflow-y-auto border rounded-lg p-4 bg-white shadow mb-4">
         {messages.map((msg, index) => (
           <div key={index} className="mb-3">
             <p
@@ -66,21 +69,22 @@ const Chat: React.FC = () => {
         {loading && <p className="text-sm text-gray-500">AI is typing...</p>}
       </div>
 
-      <div className="flex mt-4">
-        <input
-          type="text"
+      {/* Input bar */}
+      <div className="flex gap-2">
+        <Input
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setInput(e.target.value)
+          }
+          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === "Enter") sendMessage();
+          }}
           placeholder="Type a message..."
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none"
+          className="flex-1"
         />
-        <button
-          onClick={sendMessage}
-          className="px-5 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700"
-        >
-          Send
-        </button>
+        <Button onClick={sendMessage} disabled={loading}>
+          {loading ? "Sending..." : "Send"}
+        </Button>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { Input } from "../../shared/ui/input";
 import { Button } from "../../shared/ui/button";
 import type { Message, ChatProps } from "../../shared/model/types";
 import { useTheme } from "../theme/theme-context";
+import { useMutation } from "@tanstack/react-query";
 
 const Chat: React.FC<ChatProps> = ({
   name,
@@ -13,7 +14,6 @@ const Chat: React.FC<ChatProps> = ({
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
 
   const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
@@ -22,21 +22,13 @@ const Chat: React.FC<ChatProps> = ({
     content: systemPrompt,
   };
 
-  const sendMessage = async () => {
-    if (!input.trim()) return;
-
-    const userMessage: Message = { role: "user", content: input };
-    const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages);
-    setInput("");
-    setLoading(true);
-
-    try {
+  const chatMutation = useMutation({
+    mutationFn: async (newMessages: Message[]) => {
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",
         {
           model: "gpt-3.5-turbo",
-          messages: [systemMessage, ...updatedMessages],
+          messages: [systemMessage, ...newMessages],
         },
         {
           headers: {
@@ -45,14 +37,23 @@ const Chat: React.FC<ChatProps> = ({
           },
         }
       );
-
-      const assistantReply = response.data.choices[0].message;
-      setMessages([...updatedMessages, assistantReply]);
-    } catch (error) {
+      return response.data.choices[0].message;
+    },
+    onSuccess: (assistantReply) => {
+      setMessages((prev) => [...prev, assistantReply]);
+    },
+    onError: (error) => {
       console.error("OpenAI API error:", error);
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    const userMessage: Message = { role: "user", content: input };
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
+    setInput("");
+    chatMutation.mutate(updatedMessages);
   };
 
   // Utility classes
@@ -116,7 +117,7 @@ const Chat: React.FC<ChatProps> = ({
             </p>
           </div>
         ))}
-        {loading && (
+        {chatMutation.isPending && (
           <p
             className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}
           >
@@ -133,13 +134,13 @@ const Chat: React.FC<ChatProps> = ({
             setInput(e.target.value)
           }
           onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-            if (e.key === "Enter") sendMessage();
+            if (e.key === "Enter") handleSend();
           }}
           placeholder="Type a message..."
           className="flex-1"
         />
-        <Button onClick={sendMessage} disabled={loading}>
-          {loading ? "Sending..." : "Send"}
+        <Button onClick={handleSend} disabled={chatMutation.isPending}>
+          {chatMutation.isPending ? "Sending..." : "Send"}
         </Button>
       </div>
     </div>

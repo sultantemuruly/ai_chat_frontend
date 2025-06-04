@@ -5,10 +5,11 @@ import { Button } from "../../shared/ui/button";
 import type { Message } from "../../shared/model/types";
 import type { ChatProps } from "../../shared/model/types";
 
-const PsychologistChat: React.FC<ChatProps> = ({
+const Chat: React.FC<ChatProps> = ({
   name,
   description,
   imgSrc,
+  systemPrompt,
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
@@ -18,8 +19,7 @@ const PsychologistChat: React.FC<ChatProps> = ({
 
   const systemMessage = {
     role: "system",
-    content:
-      "You are a compassionate and professional psychologist chatbot assistant. Your job is to listen, support, and provide helpful guidance while being respectful and non-judgmental.",
+    content: systemPrompt,
   };
 
   const sendMessage = async () => {
@@ -114,4 +114,4 @@ const PsychologistChat: React.FC<ChatProps> = ({
   );
 };
 
-export default PsychologistChat;
+export default Chat;

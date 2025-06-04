@@ -1,20 +1,37 @@
 import { Route, Routes } from "react-router";
 import { Wrapper } from "./ui/wrapper.tsx";
-import PsychologistChat from "../modules/chat/psychologist_chat.tsx";
+import Chat from "../modules/chat/chat.tsx";
+import {
+  psychologistChat,
+  motivatorChat,
+  advicerChat,
+} from "../shared/model/chatProfiles";
 
 export const App = () => {
   return (
     <Routes>
-      <Route path={"/"} element={<Wrapper />}>
+      <Route path="/" element={<Wrapper />}>
         <Route
-          path="psychologist_chat"
+          path="chat/psychologist"
           element={
             <div className="flex justify-center items-center">
-              <PsychologistChat
-                name="Psychologist AI"
-                description="Psychologist that supports your mental well-being."
-                imgSrc="https://images.unsplash.com/photo-1607746882042-944635dfe10e"
-              />
+              <Chat {...psychologistChat} />
+            </div>
+          }
+        />
+        <Route
+          path="chat/motivator"
+          element={
+            <div className="flex justify-center items-center">
+              <Chat {...motivatorChat} />
+            </div>
+          }
+        />
+        <Route
+          path="chat/advisor"
+          element={
+            <div className="flex justify-center items-center">
+              <Chat {...advicerChat} />
             </div>
           }
         />

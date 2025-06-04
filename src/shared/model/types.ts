@@ -2,6 +2,7 @@ export interface ChatProps {
   name: string;
   description: string;
   imgSrc?: string;
+  systemPrompt: string;
 }
 
 export type Message = {

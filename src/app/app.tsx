@@ -15,7 +15,7 @@ export const App = () => {
           path="chat/psychologist"
           element={
             <div className="flex justify-center items-center">
-              <Chat {...psychologistChat} />
+              <Chat key="psychologist" {...psychologistChat} />
             </div>
           }
         />
@@ -23,7 +23,7 @@ export const App = () => {
           path="chat/motivator"
           element={
             <div className="flex justify-center items-center">
-              <Chat {...motivatorChat} />
+              <Chat key="motivator" {...motivatorChat} />
             </div>
           }
         />
@@ -31,7 +31,7 @@ export const App = () => {
           path="chat/advisor"
           element={
             <div className="flex justify-center items-center">
-              <Chat {...advicerChat} />
+              <Chat key="advisor" {...advicerChat} />
             </div>
           }
         />
